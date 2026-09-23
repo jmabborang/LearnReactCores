@@ -32,7 +32,6 @@ function Login() {
 					<img src={ClientLogo} alt="Inventory Management System logo" />
 				</div>
 				<div className="brand-copy">
-					<span className="eyebrow">INVENTORY CONTROL</span>
 					<h1>Everything in stock, always in control.</h1>
 					<p>Manage products, monitor stock levels, and keep your operations moving with confidence.</p>
 				</div>
