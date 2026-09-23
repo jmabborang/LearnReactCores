@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import './css/LandingPage.css';
+import ClientLogo from '../../assets/Logo/inventory-management-system-logo.png';
+
 const featureCards = [
   { number: '01', title: 'Know what you have', text: 'Get a clear view of every product, variant, and stock level from one calm, focused workspace.', icon: 'box' },
   { number: '02', title: 'Move with confidence', text: 'Spot low-stock items early and keep your team aligned on the work that matters next.', icon: 'pulse' },
@@ -15,22 +19,33 @@ function FeatureIcon({ type }) {
 }
 
 function Logo() {
-  return <div className="site-logo"><span className="logo-glyph">N</span><span>nexus<span className="logo-dot">.</span></span></div>;
+  return <span className="site-logo"><img src={ClientLogo} alt="Inventory Management System" /></span>;
 }
 
 function LandingPage({ onLogin }) {
+  const [activeSection, setActiveSection] = useState('home');
+  const [flippedCard, setFlippedCard] = useState(null);
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const handleNavigation = (id) => {
+    setActiveSection(id);
+    scrollTo(id);
+  };
+  const toggleCard = (cardNumber) => {
+    setFlippedCard((currentCard) => currentCard === cardNumber ? null : cardNumber);
+  };
 
   return (
     <main className="landing-page">
       <nav className="site-nav" aria-label="Main navigation">
-        <button className="logo-button" onClick={() => scrollTo('home')} aria-label="Go to home"><Logo /></button>
-        <div className="nav-links">
-          <button className="nav-link active" onClick={() => scrollTo('home')}>Home</button>
-          <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
-          <button className="nav-link" onClick={() => scrollTo('demo')}>Demo</button>
+        <button className="logo-button" onClick={() => handleNavigation('home')} aria-label="Go to home"><Logo /></button>
+        <div className="nav-actions">
+          <div className="nav-links">
+            <button className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={() => handleNavigation('home')}>Home</button>
+            <button className={`nav-link ${activeSection === 'about' ? 'active' : ''}`} onClick={() => handleNavigation('about')}>About</button>
+            <button className={`nav-link ${activeSection === 'demo' ? 'active' : ''}`} onClick={() => handleNavigation('demo')}>Demo</button>
+          </div>
+          <button className="nav-login" onClick={onLogin}>Login <ArrowIcon /></button>
         </div>
-        <button className="nav-login" onClick={onLogin}>Login <ArrowIcon /></button>
       </nav>
 
       <section className="hero-section" id="home">
@@ -62,7 +77,41 @@ function LandingPage({ onLogin }) {
 
       <section className="feature-section" id="about">
         <div className="section-intro"><span className="section-number">01 / 03</span><h2>The calm behind<br /><em>the control.</em></h2><p>Good inventory management should feel like a superpower, not another thing to manage.</p></div>
-        <div className="feature-grid">{featureCards.map((feature) => <article className="feature-card" key={feature.number}><span className="card-number">{feature.number}</span><div className="feature-icon"><FeatureIcon type={feature.icon} /></div><h3>{feature.title}</h3><p>{feature.text}</p><button className="card-arrow" onClick={() => scrollTo('demo')} aria-label={`Learn more about ${feature.title}`}><ArrowIcon /></button></article>)}</div>
+        <div className="feature-grid">
+          {featureCards.map((feature) => (
+            <article
+              className={`feature-card ${flippedCard === feature.number ? 'is-flipped' : ''}`}
+              key={feature.number}
+              onClick={() => toggleCard(feature.number)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  toggleCard(feature.number);
+                }
+              }}
+              tabIndex="0"
+              role="button"
+              aria-pressed={flippedCard === feature.number}
+              aria-label={`${feature.title}. Click to ${flippedCard === feature.number ? 'show the front' : 'learn more'}.`}
+            >
+              <div className="feature-card-inner">
+                <div className="feature-card-face feature-card-front">
+                  <span className="card-number">{feature.number}</span>
+                  <div className="feature-icon"><FeatureIcon type={feature.icon} /></div>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.text}</p>
+                  <span className="card-arrow" aria-hidden="true"><ArrowIcon /></span>
+                </div>
+                <div className="feature-card-face feature-card-back">
+                  <span className="card-number">{feature.number} / INSIGHT</span>
+                  <h3>{feature.title}</h3>
+                  <p>Keep your operation clear, connected, and ready for the next decision.</p>
+                  <span className="flip-hint">Click to flip back <ArrowIcon /></span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="demo-section" id="demo"><div><span className="eyebrow"><span className="eyebrow-line" /> A BETTER WAY TO WORK</span><h2>See the full picture.<br /><em>Make the next move.</em></h2></div><button className="demo-button" onClick={onLogin}>Explore the workspace <ArrowIcon /></button></section>
