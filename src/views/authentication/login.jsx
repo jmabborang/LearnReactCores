@@ -2,33 +2,46 @@ import { useState } from 'react';
 import Button from '../../components/Button';
 import FormGroup from '../../components/FormGroup';
 import './css/login.css';
+import ClientLogo from '../../assets/Logo/inventory-management-system-logo.png';
 
 function Login() {
 	const [userName, setUserName] = useState('');
 	const [password, setPassword] = useState('');
-	const isDisabled = !userName.trim() || !password.trim();
+	const isDisabled = !userName.trim() || !password;
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
 		const credentials = {
 			username: userName.trim(),
-			password: password.trim(),
+			password,
 		};
 
 		if (!credentials.username || !credentials.password) {
 			return;
 		}
 
-		console.log(credentials);
+		// Replace this with the authentication request when the API is connected.
+		console.info('Login submitted for:', credentials.username);
 	};
 
 	return (
 		<div className="login-container">
+			<section className="login-brand-panel" aria-label="Inventory Management System">
+				<div className="brand-mark">
+					<img src={ClientLogo} alt="Inventory Management System logo" />
+				</div>
+				<div className="brand-copy">
+					<span className="eyebrow">INVENTORY CONTROL</span>
+					<h1>Everything in stock, always in control.</h1>
+					<p>Manage products, monitor stock levels, and keep your operations moving with confidence.</p>
+				</div>
+			</section>
 			<form className="login-form" onSubmit={handleSubmit}>
 				<div className="login-header">
-					<h1>Inventory Management System</h1>
-					<p>Welcome back. Please enter your details.</p>
+					<span className="form-eyebrow">WELCOME BACK</span>
+					<h2>Sign in to your account</h2>
+					<p>Enter your details to continue to your dashboard.</p>
 				</div>
 				<FormGroup
 					autoComplete="username"
@@ -51,8 +64,9 @@ function Login() {
 					onChange={(event) => setPassword(event.target.value)}
 				/>
 				<Button disabled={isDisabled} type="submit">
-					Login
+					Sign in
 				</Button>
+				<p className="login-footer">Secure access for authorized team members only.</p>
 			</form>
 		</div>
 	);
